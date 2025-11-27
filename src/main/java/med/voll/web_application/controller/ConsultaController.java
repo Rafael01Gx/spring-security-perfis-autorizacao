@@ -35,8 +35,8 @@ public class ConsultaController {
     }
 
     @GetMapping
-    public String carregarPaginaListagem(@PageableDefault Pageable paginacao, Model model) {
-        var consultasAtivas = service.listar(paginacao);
+    public String carregarPaginaListagem(@PageableDefault Pageable paginacao, Model model,@AuthenticationPrincipal Usuario usuario) {
+        var consultasAtivas = service.listar(paginacao, usuario);
         model.addAttribute("consultas", consultasAtivas);
         return PAGINA_LISTAGEM;
     }
@@ -55,14 +55,14 @@ public class ConsultaController {
 
     @PostMapping
     @PreAuthorize("hasRole('ATENDENTE') OR hasRole('PACIENTE')")
-    public String cadastrar(@Valid @ModelAttribute("dados") DadosAgendamentoConsulta dados, BindingResult result, Model model) {
+    public String cadastrar(@Valid @ModelAttribute("dados") DadosAgendamentoConsulta dados, BindingResult result, Model model, @AuthenticationPrincipal Usuario usuario) {
         if (result.hasErrors()) {
             model.addAttribute("dados", dados);
             return PAGINA_CADASTRO;
         }
 
         try {
-            service.cadastrar(dados);
+            service.cadastrar(dados, usuario);
             return REDIRECT_LISTAGEM;
         } catch (RegraDeNegocioException e) {
             model.addAttribute("erro", e.getMessage());

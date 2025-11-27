@@ -8,4 +8,5 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 
     Page<Consulta> findAllByOrderByData(Pageable paginacao);
 
+    Page<DadosListagemConsulta> buscarConsultas(Pageable paginacao, Long id);
 }
