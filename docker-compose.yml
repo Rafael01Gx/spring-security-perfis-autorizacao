@@ -13,6 +13,7 @@ services:
       MYSQL_DATABASE: vollmed_web
     volumes:
       - db-data-voll-med:/var/lib/mysql
+      - ./init:/docker-entrypoint-initdb.d
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD" ]
       interval: 5s
