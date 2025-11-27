@@ -1,0 +1,33 @@
+services:
+
+  mysqldb:
+    container_name: mysql-voll-med
+    image: mysql:latest
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: user
+      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: vollmed_web
+    volumes:
+      - db-data-voll-med:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD" ]
+      interval: 5s
+      timeout: 10s
+      retries: 3
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    restart: always
+    ports:
+      - 8082:80
+    environment:
+      PMA_HOST: mysqldb
+
+
+volumes:
+  db-data-voll-med:
+
