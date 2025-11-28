@@ -14,6 +14,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -21,7 +23,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class ConfiguracoesSeguranca {
 
     @Bean
-    public SecurityFilterChain filtrosSeguranca(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filtrosSeguranca(HttpSecurity http, OncePerRequestFilter filtroAlteracaoSenha) throws Exception {
         return http
                 .authorizeHttpRequests(req -> {
                     req.requestMatchers("/css/**", "/js/**", "/assets/**", "/", "/index", "/home").permitAll();
@@ -35,6 +37,7 @@ public class ConfiguracoesSeguranca {
                 .formLogin(form -> form.loginPage("/login")
                         .defaultSuccessUrl("/")
                         .permitAll())
+                .addFilterBefore(filtroAlteracaoSenha, UsernamePasswordAuthenticationFilter.class)
                 .logout(logout -> logout
                         .logoutSuccessUrl("/login?logout")
                         .permitAll())
