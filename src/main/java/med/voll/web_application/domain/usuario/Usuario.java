@@ -82,4 +82,9 @@ public class Usuario implements UserDetails {
     public String getToken() {
         return token;
     }
+
+    public LocalDateTime getExpiracaoToken() {
+        return expiracao_token;
+    }
+
 }
