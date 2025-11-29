@@ -34,9 +34,11 @@ public class UsuarioService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("O usuário não foi encontrado!"));
     }
 
-    public Long salvarUsuario(String nome, String email,String senha, Perfil perfil) {
+    public Long salvarUsuario(String nome, String email, Perfil perfil) {
+        String senha = UUID.randomUUID().toString();
         String senhaCriptografada = encriptador.encode(senha);
        Usuario usuario = usuarioRepository.save(new Usuario(nome,email,senhaCriptografada, perfil ));
+       emailService.enviarEmailSenhaAleatoria(usuario, senha);
         return usuario.getId();
     }
 
