@@ -26,9 +26,11 @@ public class ConsultaService {
     }
 
     public Page<DadosListagemConsulta> listar(Pageable paginacao, Usuario logado) {
+
         if (logado.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ATENDENTE")))
             return repository.findAllByOrderByData(paginacao).map(DadosListagemConsulta::new);
-        return repository.buscarConsultas(paginacao, logado.getId());
+
+        return repository.buscarConsultas(paginacao, logado.getId()).map(DadosListagemConsulta::new);
     }
 
     @Transactional
@@ -54,9 +56,13 @@ public class ConsultaService {
         return new DadosAgendamentoConsulta(consulta.getId(), consulta.getMedico().getId(), consulta.getPaciente().getNome(), consulta.getData(), consulta.getMedico().getEspecialidade());
     }
 
-    @PreAuthorize("hasRole('ATENDENTE') or" +
-            "(hasRole('PACIENTE') and @consultaRepository.findById(#id).get().paciente.id == principal.id) or " +
-            "(hasRole('MEDICO') and #id == principal.id)")
+    @PreAuthorize("""           
+            hasRole('ATENDENTE')
+            or
+            (hasRole('PACIENTE') and @consultaRepository.findById(#id).get().paciente.id == principal.id)
+            or
+            (hasRole('MEDICO') and @consultaRepository.findById(#id).get().medico.id == principal.id)
+            """)
     @Transactional
     public void excluir(Long id) {
         repository.deleteById(id);

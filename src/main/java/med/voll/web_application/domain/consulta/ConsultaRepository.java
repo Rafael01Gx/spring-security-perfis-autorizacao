@@ -9,8 +9,10 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 
     Page<Consulta> findAllByOrderByData(Pageable paginacao);
 
-    @Query("SELECT c FROM Consulta c " +
-            "WHERE (c.medico.id = :id OR c.paciente.id = :id)" +
-            " ORDER BY c.data")
-    Page<DadosListagemConsulta> buscarConsultas(Pageable paginacao, Long id);
+    @Query("""
+            SELECT c FROM Consulta c
+            WHERE (c.medico.id = :id OR c.paciente.id = :id)
+            ORDER BY c.data
+            """)
+    Page<Consulta> buscarConsultas(Pageable paginacao, Long id);
 }
